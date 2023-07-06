@@ -3,7 +3,6 @@
 #![allow(non_snake_case)]
 extern crate lazy_static;
 
-
 pub mod camera;
 
 #[cfg(test)]

@@ -1,6 +1,6 @@
+use super::constants::{CamImgFormat, LutMode, TriggerMode};
 use super::{c_bindings::*, CameraResolution};
-use super::constants::{CamImgFormat, TriggerMode, LutMode};
-use super::{CamRes, Camera, CamFail};
+use super::{CamFail, CamRes, Camera};
 
 impl Camera {
     /// Returns maximum supported resolution of the camera in format (width, height)
@@ -20,14 +20,14 @@ impl Camera {
         unsafe {
             let mut curr_resolution = tSdkImageResolution::default();
             let status = CameraGetImageResolution(self.h_camera, &mut curr_resolution);
-            if status != 0 { 
-                Err(CamFail::new(status)) 
-            } else { 
-                Ok(CameraResolution{
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(CameraResolution {
                     __idx: curr_resolution.iIndex as usize,
                     width: curr_resolution.iWidth as u32,
                     height: curr_resolution.iHeight as u32,
-                }) 
+                })
             }
         }
     }
@@ -39,21 +39,21 @@ impl Camera {
 
     /// Calculates size in bytes needed for one image in current camera configuration
     pub fn calc_image_size(&self) -> CamRes<usize> {
-        let CameraResolution {width, height, ..} = self.get_current_resolution()?;
+        let CameraResolution { width, height, .. } = self.get_current_resolution()?;
         let mut result = (width * height) as usize;
         if self.is_rgb() {
             result *= 3;
         }
         // TODO: go over all formats
-        if let CamImgFormat::MONO16 | CamImgFormat::RGB16  = self.get_image_format()? {
+        if let CamImgFormat::MONO16 | CamImgFormat::RGB16 = self.get_image_format()? {
             result *= 2;
         }
         Ok(result)
     }
 
-    /// Since library provides less posibilities, then raw C library, you can get raw handler to 
+    /// Since library provides less posibilities, then raw C library, you can get raw handler to
     /// camera, and call unsafe c functions from camera::c_bindings
-    /// 
+    ///
     /// # Example
     /// ```
     /// use mvsdk_rust::camera::c_bindings;
@@ -76,9 +76,9 @@ impl Camera {
         unsafe {
             let mut mtype: u32 = 0;
             let status = CameraGetIspOutFormat(self.h_camera, &mut mtype);
-            if status != 0 { 
+            if status != 0 {
                 return Err(CamFail::new(status));
-            } else { 
+            } else {
                 let fmt = CamImgFormat::from_raw(mtype)?;
                 return Ok(fmt);
             }
@@ -89,7 +89,11 @@ impl Camera {
         unsafe {
             let mut is_auto: i32 = 0;
             let status = CameraGetAeState(self.h_camera, &mut is_auto);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(is_auto == 1) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(is_auto == 1)
+            }
         }
     }
 
@@ -97,7 +101,11 @@ impl Camera {
         unsafe {
             let mut sharpness: i32 = 0;
             let status = CameraGetSharpness(self.h_camera, &mut sharpness);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(sharpness) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(sharpness)
+            }
         }
     }
 
@@ -105,7 +113,11 @@ impl Camera {
         unsafe {
             let mut delay: u32 = 0;
             let status = CameraGetTriggerDelayTime(self.h_camera, &mut delay);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(delay) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(delay)
+            }
         }
     }
 
@@ -113,7 +125,11 @@ impl Camera {
         unsafe {
             let mut period: u32 = 0;
             let status = CameraGetTriggerPeriodTime(self.h_camera, &mut period);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(period) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(period)
+            }
         }
     }
 
@@ -121,7 +137,11 @@ impl Camera {
         unsafe {
             let mut count: i32 = 0;
             let status = CameraGetTriggerCount(self.h_camera, &mut count);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(count) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(count)
+            }
         }
     }
 
@@ -130,7 +150,11 @@ impl Camera {
             let mut mode: i32 = 0;
             let status = CameraGetTriggerMode(self.h_camera, &mut mode);
             let mode = TriggerMode::from_raw(mode)?;
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(mode) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(mode)
+            }
         }
     }
 
@@ -139,7 +163,11 @@ impl Camera {
             let mut mode: i32 = 0;
             let status = CameraGetLutMode(self.h_camera, &mut mode);
             let mode = LutMode::from_raw(mode)?;
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(mode) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(mode)
+            }
         }
     }
 
@@ -147,7 +175,11 @@ impl Camera {
         unsafe {
             let mut preset: i32 = 0;
             let status = CameraGetLutPresetSel(self.h_camera, &mut preset);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(preset) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(preset)
+            }
         }
     }
 
@@ -155,7 +187,11 @@ impl Camera {
         unsafe {
             let mut gain: i32 = 0;
             let status = CameraGetAnalogGain(self.h_camera, &mut gain);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(gain) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(gain)
+            }
         }
     }
 
@@ -163,7 +199,11 @@ impl Camera {
         unsafe {
             let mut exposure: f64 = 0f64;
             let status = CameraGetExposureTime(self.h_camera, &mut exposure);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(exposure) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(exposure)
+            }
         }
     }
 
@@ -180,11 +220,11 @@ impl Camera {
         for i in 0..n_resolutions {
             unsafe {
                 let raw_resolution = *resolutions.add(i as usize);
-                supported_resolutions.push( CameraResolution {
+                supported_resolutions.push(CameraResolution {
                     __idx: i as usize,
                     width: raw_resolution.iWidth as u32,
                     height: raw_resolution.iHeight as u32,
-                } );
+                });
             }
         }
         supported_resolutions

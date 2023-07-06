@@ -2,9 +2,9 @@
 extern crate bindgen;
 #[cfg(feature = "compile_bindings")]
 use std::env;
+use std::env;
 #[cfg(feature = "compile_bindings")]
 use std::path::PathBuf;
-use std::env;
 
 fn main() {
     // Tell cargo to tell rustc to link the libMVSDK.so shared library.
@@ -12,8 +12,8 @@ fn main() {
     match env::var("LIB_MVSDK_PATH") {
         Ok(mvsdk_path) => {
             link_search += &(mvsdk_path + ":");
-        },
-        Err(_) => {},
+        }
+        Err(_) => {}
     }
     link_search += "/usr/lib/";
     println!("{}", link_search);
@@ -22,7 +22,7 @@ fn main() {
 
     #[cfg(feature = "compile_bindings")]
     {
-         // Tell cargo to invalidate the built crate whenever the wrapper changes
+        // Tell cargo to invalidate the built crate whenever the wrapper changes
         println!("cargo:rerun-if-changed=./c-include/CameraApi.h");
         println!("cargo:rerun-if-changed=./c-include/CameraDefine.h");
         println!("cargo:rerun-if-changed=./c-include/CameraStatus.h");

@@ -20,14 +20,14 @@ pub struct ImageInfo {
     pub b_gain: f32,
 }
 
-
 /// Trat that should be implemented on struct to pass custom callback
 /// Check Example 3 from README for implementation example
-pub trait CamCallBackCtx {//<'a> {
+pub trait CamCallBackCtx {
+    //<'a> {
     /// Called once before capturing
     fn allocate_cam_buf(&mut self, img_size: usize, n_images: usize) -> CamRes<()>;
 
-    /// Called when capturing. Camera will write in buffer returned by this function. 
+    /// Called when capturing. Camera will write in buffer returned by this function.
     /// Note, if size will be too small, Camera will reserve more memory with warning
     fn get_cam_buf(&mut self) -> Rc<RefCell<Vec<u8>>>;
 
@@ -119,13 +119,13 @@ impl Camera {
         ))
     }
 
-    /// Should be used before any triggering. 
+    /// Should be used before any triggering.
     /// Reserves image buffer to fit n_images and apllies default callback if callback_ctx=None
-    /// Otherwise applies custom callback, and calles CamCallBackCtx::allocate_cam_buf 
+    /// Otherwise applies custom callback, and calles CamCallBackCtx::allocate_cam_buf
     pub fn set_callback_context(
         &mut self,
         n_images: usize,
-        callback_ctx: Option<Box<dyn CamCallBackCtx>>
+        callback_ctx: Option<Box<dyn CamCallBackCtx>>,
     ) -> CamRes<()> {
         // update image size in case user changed resolution/chanels
         match callback_ctx {
@@ -134,7 +134,7 @@ impl Camera {
                 callback_ctx.allocate_cam_buf(self.img_size, n_images)?;
                 self.custom_callback_context = Some(callback_ctx);
                 self.apply_raw_callback(custom_callback_wrapper)?;
-            }, 
+            }
             None => {
                 // allocate Camera's image buffer
                 self.resize_img_buf(n_images)?;
@@ -154,7 +154,7 @@ impl Camera {
         &self.img_buf
     }
 
-    /// Should be called before next capturing session with default callback. 
+    /// Should be called before next capturing session with default callback.
     /// If not called, default callback will allocate more memory in callback
     pub fn clear_trigger_counter(&mut self) {
         self.trig_count = 0;
@@ -175,14 +175,18 @@ impl Camera {
     }
 
     fn apply_raw_callback(&mut self, callback: RAW_CALLBACK) -> CamRes<()> {
-        unsafe { 
+        unsafe {
             let status = CameraSetCallbackFunction(
                 self.h_camera,
                 Some(callback),
                 self as *mut Camera as PVOID,
                 &mut None as *mut CAMERA_SNAP_PROC,
             );
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(()) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(())
+            }
         }
     }
 }
@@ -197,14 +201,15 @@ unsafe extern "C" fn default_callback(
     let trig_count = (*camera).trig_count;
     let trig_buf = &mut (*camera).img_buf;
     let img_size = (*camera).img_size;
-    if (trig_count+1) * img_size > trig_buf.len() {
+    if (trig_count + 1) * img_size > trig_buf.len() {
         println!("Callback: Warnings: Buffer turned out to be too small. Allocating in callback may slow down program. 
                     Please specify correct number of images in prepare_trigger()");
-        (*camera).reserve_img_buf(trig_count * 2 ).unwrap_or_else(|err| {
-            eprintln!("Callback: Error while allocating buffer: {:?}", err);
-            return
-        });
-        
+        (*camera)
+            .reserve_img_buf(trig_count * 2)
+            .unwrap_or_else(|err| {
+                eprintln!("Callback: Error while allocating buffer: {:?}", err);
+                return;
+            });
     }
     let status = CameraImageProcess(
         h_camera,
@@ -246,17 +251,23 @@ unsafe extern "C" fn custom_callback_wrapper(
                 let status = CameraImageProcess(h_camera, pframe_buffer, &mut buf[0], pframe_head);
                 if status != 0 {
                     buf_is_valid = false;
-                    eprintln!("Callback: CameraReleaseImageBuffer error: {:?}", CamFail::new(status));
+                    eprintln!(
+                        "Callback: CameraReleaseImageBuffer error: {:?}",
+                        CamFail::new(status)
+                    );
                 }
                 let status = CameraReleaseImageBuffer(h_camera, pframe_buffer);
                 if status != 0 {
                     buf_is_valid = false;
-                    eprintln!("Callback: CameraReleaseImageBuffer error: {:?}", CamFail::new(status));
+                    eprintln!(
+                        "Callback: CameraReleaseImageBuffer error: {:?}",
+                        CamFail::new(status)
+                    );
                 }
             }
-            
+
             callback.process_cam_buf(
-                buf_is_valid, 
+                buf_is_valid,
                 ImageInfo {
                     width: (*pframe_head).iWidth as u32,
                     height: (*pframe_head).iHeight as u32,
@@ -271,9 +282,9 @@ unsafe extern "C" fn custom_callback_wrapper(
                     b_gain: (*pframe_head).fBgain,
                 },
             );
-        },
+        }
         None => {
             eprintln!("Callback: custom_callback_context is None. Doing nothing.")
-        },
+        }
     }
 }

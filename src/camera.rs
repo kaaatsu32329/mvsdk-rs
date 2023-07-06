@@ -1,23 +1,23 @@
-pub mod status;
-pub mod constants;
 pub mod c_bindings;
+pub mod constants;
+pub mod status;
 
 mod capture;
+mod helpers;
 mod info;
 mod settings;
-mod helpers;
 
 // use std::{cell::RefCell, rc::Rc, any::Any};
 
 use self::c_bindings::*;
 use helpers::default_capabilities;
 
-pub use status::CamFail;
-pub use constants::{CamImgFormat, TriggerMode, LutMode};
 pub use capture::{CamCallBackCtx, ImageInfo};
+pub use constants::{CamImgFormat, LutMode, TriggerMode};
+pub use status::CamFail;
 
 /// Result returned by all functions that can fail.
-/// 
+///
 /// # Example
 /// ```
 /// let camera = match Camera::new() {
@@ -26,7 +26,7 @@ pub use capture::{CamCallBackCtx, ImageInfo};
 ///         match err {
 ///             CamFail::NO_DEVICE_FOUND => {
 ///                 panic!("Plug in camera!");
-///             }, 
+///             },
 ///             _ => {
 ///                 panic!("Failed with code: {:?}", err);
 ///             }
@@ -41,13 +41,13 @@ pub type CamRes<T> = Result<T, CamFail>;
 pub struct CameraResolution {
     __idx: usize,
     pub width: u32,
-    pub height: u32
+    pub height: u32,
 }
 
 /// Main struct. Should be singleton
 pub struct Camera {
-    img_buf: Vec<u8>, // image buffer - used when retrieving camera
-    h_camera: CameraHandle,   // handler of camera used internally by library
+    img_buf: Vec<u8>,                  // image buffer - used when retrieving camera
+    h_camera: CameraHandle,            // handler of camera used internally by library
     capabilities: tSdkCameraCapbility, // library struct that incapsulates all capabilities of the camera
     #[allow(dead_code)]
     dev_info: tSdkCameraDevInfo,
@@ -57,8 +57,8 @@ pub struct Camera {
 
     prepare_timeout: u32, // how long for camera to prepare image..
 
-    trig_count: usize,      // if counter < trig_buf.len(), then trig_buf[counter++]=image else pass
-    img_size: usize,      // size of one image. Depends on rgb/grayscale, 10bit mode, resolution
+    trig_count: usize, // if counter < trig_buf.len(), then trig_buf[counter++]=image else pass
+    img_size: usize,   // size of one image. Depends on rgb/grayscale, 10bit mode, resolution
 
     // used for customg callback
     custom_callback_context: Option<Box<dyn CamCallBackCtx>>,
@@ -146,7 +146,11 @@ impl Camera {
     pub fn pause(&self) -> CamRes<()> {
         unsafe {
             let status = CameraPause(self.h_camera);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(()) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(())
+            }
         }
     }
 
@@ -154,7 +158,11 @@ impl Camera {
     pub fn play(&self) -> CamRes<()> {
         unsafe {
             let status = CameraPlay(self.h_camera);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(()) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(())
+            }
         }
     }
 
@@ -162,10 +170,13 @@ impl Camera {
     pub fn stop(&self) -> CamRes<()> {
         unsafe {
             let status = CameraStop(self.h_camera);
-            if status != 0 { Err(CamFail::new(status)) } else { Ok(()) }
+            if status != 0 {
+                Err(CamFail::new(status))
+            } else {
+                Ok(())
+            }
         }
     }
-
 }
 
 impl Drop for Camera {

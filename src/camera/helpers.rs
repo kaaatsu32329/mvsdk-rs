@@ -36,7 +36,6 @@ pub fn default_capabilities() -> tSdkCameraCapbility {
         sContrastRange: tContrastRange::default(),
         sSharpnessRange: tSharpnessRange::default(),
         sIspCapacity: tSdkIspCapacity::default(),
-
     }
 }
 
@@ -44,6 +43,6 @@ pub fn default_capabilities() -> tSdkCameraCapbility {
 pub fn default_camera_frame() -> sCameraFrame {
     sCameraFrame {
         head: tSdkFrameHead::default(),
-        pBuffer: 0 as *mut BYTE
+        pBuffer: 0 as *mut BYTE,
     }
 }
