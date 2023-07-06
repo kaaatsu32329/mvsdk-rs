@@ -1,0 +1,24 @@
+[package]
+edition = "2021"
+name = "mvsdk"
+version = "0.1.1"
+authors = ["Katsu Uchiyama"]
+build = "build.rs"
+description = "Rust wrapper on top of Mind Vision Industrial camera SDK C/C++ library"
+readme = "README.md"
+categories = ["computer-vision", "external-ffi-bindings"]
+license = "MIT"
+resolver = "2"
+
+[dependencies.lazy_static]
+version = "1.4.0"
+
+[dependencies.libc]
+version = "0.2.116"
+[build-dependencies.bindgen]
+version = "0.59.2"
+optional = true
+
+[features]
+compile_bindings = ["bindgen"]
+default = []
