@@ -2,6 +2,7 @@
 extern crate bindgen;
 #[cfg(feature = "compile_bindings")]
 use std::env;
+#[cfg(not(feature = "compile_bindings"))]
 use std::env;
 #[cfg(feature = "compile_bindings")]
 use std::path::PathBuf;
