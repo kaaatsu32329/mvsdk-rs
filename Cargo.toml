@@ -2,7 +2,7 @@
 edition = "2021"
 name = "mvsdk"
 version = "0.1.1"
-authors = ["Katsu Uchiyama"]
+authors = ["Pavlo Hilei"]
 build = "build.rs"
 description = "Rust wrapper on top of Mind Vision Industrial camera SDK C/C++ library"
 readme = "README.md"
