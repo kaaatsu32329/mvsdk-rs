@@ -10,15 +10,13 @@ categories = ["computer-vision", "external-ffi-bindings"]
 license = "MIT"
 resolver = "2"
 
-[dependencies.lazy_static]
-version = "1.4.0"
-
-[dependencies.libc]
-version = "0.2.116"
-[build-dependencies.bindgen]
-version = "0.59.2"
-optional = true
-
 [features]
 compile_bindings = ["bindgen"]
 default = []
+
+[dependencies]
+lazy_static = "1.4.0"
+libc = "0.2.116"
+
+[build-dependencies]
+bindgen = { version = "0.59.2", optional = true }
