@@ -124,7 +124,7 @@ impl Camera {
             capabilities,
             dev_info: t_camera_enum_list,
             frame_info: tSdkFrameHead::default(),
-            pby_kernel_buffer: 0 as *mut BYTE,
+            pby_kernel_buffer: std::ptr::null_mut::<BYTE>(),
             prepare_timeout: 1000,
             trig_count: 0,
             img_size: 0,
@@ -182,7 +182,7 @@ impl Camera {
 impl Drop for Camera {
     fn drop(&mut self) {
         unsafe {
-            if self.pby_kernel_buffer != 0 as *mut BYTE {
+            if self.pby_kernel_buffer != std::ptr::null_mut::<BYTE>() {
                 CameraReleaseImageBuffer(self.h_camera, self.pby_kernel_buffer);
             }
             CameraUnInit(self.h_camera);

@@ -208,7 +208,6 @@ unsafe extern "C" fn default_callback(
             .reserve_img_buf(trig_count * 2)
             .unwrap_or_else(|err| {
                 eprintln!("Callback: Error while allocating buffer: {:?}", err);
-                return;
             });
     }
     let status = CameraImageProcess(

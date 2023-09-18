@@ -15,14 +15,14 @@ mod tests {
     #[test]
     fn init_test() {
         let mut iCameraCounts: i32 = 1;
-        let iStatus: i32 = -1;
+        let _iStatus: i32 = -1;
         let mut tCameraEnumList = tSdkCameraDevInfo::default();
-        let hCamera: i32;
-        let tCapability: tSdkCameraCapbility;
-        let sFrameInfo: tSdkFrameHead;
-        let pbyBuffer: *mut BYTE;
-        let iDisplayFrames: i32 = 10000;
-        let channel: i32 = 3;
+        let _hCamera: i32;
+        let _tCapability: tSdkCameraCapbility;
+        let _sFrameInfo: tSdkFrameHead;
+        let _pbyBuffer: *mut BYTE;
+        let _iDisplayFrames: i32 = 10000;
+        let _channel: i32 = 3;
 
         unsafe {
             let status = CameraSdkInit(1);

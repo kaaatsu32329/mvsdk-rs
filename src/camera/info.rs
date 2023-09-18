@@ -77,10 +77,10 @@ impl Camera {
             let mut mtype: u32 = 0;
             let status = CameraGetIspOutFormat(self.h_camera, &mut mtype);
             if status != 0 {
-                return Err(CamFail::new(status));
+                Err(CamFail::new(status))
             } else {
                 let fmt = CamImgFormat::from_raw(mtype)?;
-                return Ok(fmt);
+                Ok(fmt)
             }
         }
     }

@@ -43,6 +43,6 @@ pub fn default_capabilities() -> tSdkCameraCapbility {
 pub fn default_camera_frame() -> sCameraFrame {
     sCameraFrame {
         head: tSdkFrameHead::default(),
-        pBuffer: 0 as *mut BYTE,
+        pBuffer: std::ptr::null_mut::<BYTE>(),
     }
 }

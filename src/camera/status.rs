@@ -125,6 +125,6 @@ impl CamFail {
         if idx > STATUS_TO_FAIL.len() || status > 0 {
             return CamFail::INVALID_STATUS;
         }
-        return STATUS_TO_FAIL[idx];
+        STATUS_TO_FAIL[idx]
     }
 }
